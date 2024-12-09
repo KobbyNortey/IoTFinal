@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node Management</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<header>
+    <h1>Node Management</h1>
+</header>
+<nav>
+    <ul>
+        <li><a href="historical_data.html">Historical Data</a></li>
+        <li><a href="reports.html">Reports</a></li>
+    </ul>
+</nav>
+<main>
+    <h1>Add Smart Node</h1>
+    <form action="../../backend/addsmatnode.php" method="POST">
+        <label for="node_name">Node Name:</label><br>
+        <input type="text" id="node_name" name="node_name" required><br><br>
+
+        <label for="location">Location:</label><br>
+        <input type="text" id="location" name="location" required><br><br>
+
+        <input type="submit" value="Add Node">
+    </form>
+</main>
+</body>
+</html>

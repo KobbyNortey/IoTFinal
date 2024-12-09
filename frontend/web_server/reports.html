@@ -1,0 +1,44 @@
+<!-- reports.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<header>
+    <h1>View Individual Report</h1>
+</header>
+<nav>
+    <ul>
+        <li><a href="node_management.html">Node Management</a></li>
+        <li><a href="historical_data.html">Historical Data</a></li>
+    </ul>
+</nav>
+<form id="report-form">
+    <label for="report_id">Report ID:</label><br>
+    <input type="number" id="report_id" name="report_id" required><br><br>
+    <input type="submit" value="View Report">
+</form>
+
+<div id="report-content">
+    <!-- Report content will be displayed here -->
+</div>
+
+<script>
+    document.getElementById('report-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const reportId = document.getElementById('report_id').value;
+
+        fetch(`../backend/viewindividualreport.php?report_id=${reportId}`)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('report-content').innerHTML = data;
+            })
+            .catch(error => console.error('Error fetching report:', error));
+    });
+</script>
+</body>
+</html>

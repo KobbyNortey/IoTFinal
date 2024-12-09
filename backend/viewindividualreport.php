@@ -1,0 +1,38 @@
+<?php
+header('Content-Type: application/json');
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "final_project";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    echo json_encode(["error" => "Database connection failed"]);
+    exit;
+}
+
+if (isset($_GET['node_name'])) {
+    $node_name = htmlspecialchars(strip_tags($_GET['report_id']));
+
+    $stmt = $conn->prepare("SELECT * FROM SensorReadings WHERE node_id = ? ORDER BY timestamp DESC");
+    $stmt->bind_param("s", $node_name);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $readings = [];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $readings[] = $row;
+        }
+    }
+
+    echo json_encode($readings);
+    $stmt->close();
+} else {
+    echo json_encode(["error" => "Node name not provided"]);
+}
+
+$conn->close();
+?>
