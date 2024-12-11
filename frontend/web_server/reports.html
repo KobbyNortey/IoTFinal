@@ -1,4 +1,3 @@
-<!-- reports.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +8,7 @@
 </head>
 <body>
 <header>
-    <h1>View Individual Report</h1>
+    <h1>View Node Report</h1>
 </header>
 <nav>
     <ul>
@@ -17,27 +16,62 @@
         <li><a href="historical_data.html">Historical Data</a></li>
     </ul>
 </nav>
-<form id="report-form">
-    <label for="report_id">Report ID:</label><br>
-    <input type="number" id="report_id" name="report_id" required><br><br>
-    <input type="submit" value="View Report">
-</form>
-
-<div id="report-content">
-    <!-- Report content will be displayed here -->
-</div>
-
+<main>
+    <form id="report-form">
+        <label for="node_name">Enter Node Name:</label><br>
+        <input type="text" id="node_name" name="node_name" required><br><br>
+        <input type="submit" value="View Report">
+    </form>
+    <div id="report-content">
+        <!-- Report content will be displayed here -->
+    </div>
+</main>
 <script>
     document.getElementById('report-form').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const reportId = document.getElementById('report_id').value;
+        event.preventDefault(); // Prevent form submission
+        const nodeName = document.getElementById('node_name').value;
 
-        fetch(`../backend/viewindividualreport.php?report_id=${reportId}`)
-            .then(response => response.text())
+        // Fetch readings for the specified node
+        fetch(`../../backend/viewindividualreport.php?node_name=${nodeName}`)
+            .then(response => response.json())
             .then(data => {
-                document.getElementById('report-content').innerHTML = data;
+                const reportContent = document.getElementById('report-content');
+                reportContent.innerHTML = ''; // Clear previous content
+
+                if (data.error) {
+                    reportContent.innerHTML = `<p style="color: red;">${data.error}</p>`;
+                } else if (data.length === 0) {
+                    reportContent.innerHTML = '<p>No readings found for this node.</p>';
+                } else {
+                    let table = `<table border="1">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Temperature</th>
+                                <th>Humidity</th>
+                                <th>Light Intensity</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                    data.forEach(reading => {
+                        table += `
+                            <tr>
+                                <td>${reading.timestamp}</td>
+                                <td>${reading.temperature}</td>
+                                <td>${reading.humidity}</td>
+                                <td>${reading.light_intensity}</td>
+                            </tr>`;
+                    });
+
+                    table += '</tbody></table>';
+                    reportContent.innerHTML = table;
+                }
             })
-            .catch(error => console.error('Error fetching report:', error));
+            .catch(error => {
+                console.error('Error fetching report:', error);
+                document.getElementById('report-content').innerHTML = `<p style="color: red;">Failed to fetch the report.</p>`;
+            });
     });
 </script>
 </body>

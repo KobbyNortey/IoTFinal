@@ -18,7 +18,7 @@
 </nav>
 <main>
     <h1>Add Smart Node</h1>
-    <form action="../../backend/addsmatnode.php" method="POST">
+    <form id="node-form" action="../../backend/addsmatnode.php" method="POST">
         <label for="node_name">Node Name:</label><br>
         <input type="text" id="node_name" name="node_name" required><br><br>
 
@@ -28,5 +28,23 @@
         <input type="submit" value="Add Node">
     </form>
 </main>
+<script>
+    document.getElementById('node-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const nodeName = document.getElementById('node_name').value;
+
+        fetch(this.action, {
+            method: this.method,
+            body: new FormData(this),
+        })
+            .then(response => response.text())
+            .then(result => {
+                alert(result); // Show result message
+                sessionStorage.setItem('lastNode', nodeName); // Save node_name for reports
+                window.location.reload(); // Stay on the same page
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
 </body>
 </html>

@@ -1,27 +1,30 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "final_project";
+   $servername = "localhost";
+   $username = "root";
+   $password = "";
+   $dbname = "final_project";
 
-
+    // Connect to the database
     $conn = new mysqli($servername, $username, $password, $dbname);
 
+    // Check connection
     if ($conn->connect_error) {
-        die(json_encode(["error" => "Database connection failed"]));
+        die("Database connection failed: " . $conn->connect_error);
     }
 
-    $name = htmlspecialchars(strip_tags($_POST['node_name']));
+    $node_name = htmlspecialchars(strip_tags($_POST['node_name']));
     $location = htmlspecialchars(strip_tags($_POST['location']));
 
+    // Prepare and bind
     $stmt = $conn->prepare("INSERT INTO SmartNodes (name, location) VALUES (?, ?)");
-    $stmt->bind_param("ss", $name, $location);
+    $stmt->bind_param("ss", $node_name, $location);
 
+    // Execute and provide feedback
     if ($stmt->execute()) {
-        echo json_encode(["success" => "Node added successfully!"]);
+        echo "Node successfully added.";
     } else {
-        echo json_encode(["error" => "Failed to add node"]);
+        echo "Error adding node: " . $stmt->error;
     }
 
     $stmt->close();
